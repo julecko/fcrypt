@@ -10,10 +10,11 @@ message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
 
 add_executable(fcrypt
     src/main.c
+    src/cli.c
 )
 
 target_include_directories(fcrypt PRIVATE
-    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/include
 )
 
 target_compile_definitions(fcrypt PRIVATE
