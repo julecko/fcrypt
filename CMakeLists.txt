@@ -8,10 +8,14 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
 
+find_package(unofficial-sodium CONFIG REQUIRED)
+
 add_executable(fcrypt
     src/main.c
     src/cli.c
 )
+
+target_link_libraries(fcrypt PRIVATE unofficial-sodium::sodium)
 
 target_include_directories(fcrypt PRIVATE
     ${PROJECT_SOURCE_DIR}/include
