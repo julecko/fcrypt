@@ -21,6 +21,10 @@ if /I "%~1"=="-r" (
     goto collect_run_args
 )
 
+if /I "%~1"=="--installer" (
+    goto installer
+)
+
 if not "%~1"=="" (
     echo Unknown argument: %~1
     exit /b 1
@@ -66,4 +70,19 @@ if "%RUN_EXEC%"=="1" (
     "%BUILD_DIR%\%BUILD_TYPE%\fcrypt.exe" %RUN_ARGS%
 )
 
+goto end
+
+:installer
+
+echo Building installer for fcrypt project
+echo .
+
+set "INSTALLER_BIN_DIR=installer\bin"
+if not exist "%INSTALLER_BIN_DIR%" mkdir "%INSTALLER_BIN_DIR%"
+
+copy build\Release\fcrypt.exe installer\bin\
+copy build\Release\*.dll installer\bin\
+
+
+:end
 endlocal
