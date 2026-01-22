@@ -10,7 +10,7 @@ AppPublisher={#MyAppPublisher}
 ; AppPublisherURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-OutputBaseFilename=MyEncryptorInstaller
+OutputBaseFilename=FcryptInstaller
 Compression=lzma
 SolidCompression=yes
 
@@ -21,14 +21,14 @@ PrivilegesRequiredOverridesAllowed=dialog
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
 [Tasks]
-Name: "contextmenu"; Description: "Add 'Encrypt' to Windows Explorer context menu"; Flags: checkedonce
+Name: "startmenu"; Description: "Add Fcrypt to Start Menu"; Flags: unchecked
 
 [Files]
 Source: "bin\fcrypt.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startmenu
 
 [Registry]
 ; ===============================
@@ -36,32 +36,68 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 ; ===============================
 Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: ""; ValueData: "Encrypt"; \
-    Flags: uninsdeletekey; Tasks: contextmenu; Check: IsAdminInstallMode
+    Flags: uninsdeletekey; Check: IsAdminInstallMode
 
 Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: "Icon"; ValueData: "{app}\{#MyAppExeName}"; \
-    Flags: uninsdeletevalue; Tasks: contextmenu; Check: IsAdminInstallMode
+    Flags: uninsdeletevalue; Check: IsAdminInstallMode
 
 Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt\command"; \
     ValueType: string; ValueName: ""; \
-    ValueData: """{app}\{#MyAppExeName}"" ""%1"""; \
-    Flags: uninsdeletekey; Tasks: contextmenu; Check: IsAdminInstallMode
+    ValueData: """{app}\{#MyAppExeName}"" --encrypt ""%1"""; \
+    Flags: uninsdeletekey; Check: IsAdminInstallMode
+
+Root: HKLM; Subkey: "Software\Classes\*\shell\Decrypt"; \
+    ValueType: string; ValueName: ""; ValueData: "Decrypt"; \
+    Flags: uninsdeletekey; Check: IsAdminInstallMode
+
+Root: HKLM; Subkey: "Software\Classes\*\shell\Decrypt"; \
+    ValueType: string; ValueName: "Icon"; ValueData: "{app}\{#MyAppExeName}"; \
+    Flags: uninsdeletevalue; Check: IsAdminInstallMode
+
+Root: HKLM; Subkey: "Software\Classes\*\shell\Decrypt\command"; \
+    ValueType: string; ValueName: ""; \
+    ValueData: """{app}\{#MyAppExeName}"" --decrypt ""%1"""; \
+    Flags: uninsdeletekey; Check: IsAdminInstallMode
+
+; Add to system PATH
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; \
+    ValueType: string; ValueName: "Path"; \
+    ValueData: "{olddata};{app}"; Flags: preservestringtype uninsdeletevalue; Check: IsAdminInstallMode
 
 ; ===============================
 ; CONTEXT MENU (PER-USER)
 ; ===============================
 Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: ""; ValueData: "Encrypt"; \
-    Flags: uninsdeletekey; Tasks: contextmenu; Check: not IsAdminInstallMode
+    Flags: uninsdeletekey; Check: not IsAdminInstallMode
 
 Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: "Icon"; ValueData: "{app}\{#MyAppExeName}"; \
-    Flags: uninsdeletevalue; Tasks: contextmenu; Check: not IsAdminInstallMode
+    Flags: uninsdeletevalue; Check: not IsAdminInstallMode
 
 Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt\command"; \
     ValueType: string; ValueName: ""; \
-    ValueData: """{app}\{#MyAppExeName}"" ""%1"""; \
-    Flags: uninsdeletekey; Tasks: contextmenu; Check: not IsAdminInstallMode
+    ValueData: """{app}\{#MyAppExeName}"" --encrypt ""%1"""; \
+    Flags: uninsdeletekey; Check: not IsAdminInstallMode
+
+Root: HKCU; Subkey: "Software\Classes\*\shell\Decrypt"; \
+    ValueType: string; ValueName: ""; ValueData: "Decrypt"; \
+    Flags: uninsdeletekey; Check: not IsAdminInstallMode
+
+Root: HKCU; Subkey: "Software\Classes\*\shell\Decrypt"; \
+    ValueType: string; ValueName: "Icon"; ValueData: "{app}\{#MyAppExeName}"; \
+    Flags: uninsdeletevalue; Check: not IsAdminInstallMode
+
+Root: HKCU; Subkey: "Software\Classes\*\shell\Decrypt\command"; \
+    ValueType: string; ValueName: ""; \
+    ValueData: """{app}\{#MyAppExeName}"" --decrypt ""%1"""; \
+    Flags: uninsdeletekey; Check: not IsAdminInstallMode
+
+; Add to user PATH
+Root: HKCU; Subkey: "Environment"; \
+    ValueType: string; ValueName: "Path"; \
+    ValueData: "{olddata};{app}"; Flags: preservestringtype uninsdeletevalue; Check: not IsAdminInstallMode
 
 [Code]
 function IsAdminInstallMode: Boolean;
