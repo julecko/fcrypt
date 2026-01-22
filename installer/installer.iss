@@ -14,7 +14,7 @@ OutputBaseFilename=MyEncryptorInstaller
 Compression=lzma
 SolidCompression=yes
 
-; IMPORTANT: allow user/system install choice
+; Allow user/system install choice
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 
@@ -36,39 +36,32 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 ; ===============================
 Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: ""; ValueData: "Encrypt"; \
-    Tasks: contextmenu; Check: IsAdminInstallMode
+    Flags: uninsdeletekey; Tasks: contextmenu; Check: IsAdminInstallMode
 
 Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: "Icon"; ValueData: "{app}\{#MyAppExeName}"; \
-    Tasks: contextmenu; Check: IsAdminInstallMode
+    Flags: uninsdeletevalue; Tasks: contextmenu; Check: IsAdminInstallMode
 
 Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt\command"; \
     ValueType: string; ValueName: ""; \
     ValueData: """{app}\{#MyAppExeName}"" ""%1"""; \
-    Tasks: contextmenu; Check: IsAdminInstallMode
+    Flags: uninsdeletekey; Tasks: contextmenu; Check: IsAdminInstallMode
 
 ; ===============================
 ; CONTEXT MENU (PER-USER)
 ; ===============================
 Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: ""; ValueData: "Encrypt"; \
-    Tasks: contextmenu; Check: not IsAdminInstallMode
+    Flags: uninsdeletekey; Tasks: contextmenu; Check: not IsAdminInstallMode
 
 Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt"; \
     ValueType: string; ValueName: "Icon"; ValueData: "{app}\{#MyAppExeName}"; \
-    Tasks: contextmenu; Check: not IsAdminInstallMode
+    Flags: uninsdeletevalue; Tasks: contextmenu; Check: not IsAdminInstallMode
 
 Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt\command"; \
     ValueType: string; ValueName: ""; \
     ValueData: """{app}\{#MyAppExeName}"" ""%1"""; \
-    Tasks: contextmenu; Check: not IsAdminInstallMode
-
-[UninstallDelete]
-; Cleanup for system-wide
-Type: regkey; Name: "HKLM\Software\Classes\*\shell\Encrypt"
-
-; Cleanup for per-user
-Type: regkey; Name: "HKCU\Software\Classes\*\shell\Encrypt"
+    Flags: uninsdeletekey; Tasks: contextmenu; Check: not IsAdminInstallMode
 
 [Code]
 function IsAdminInstallMode: Boolean;
