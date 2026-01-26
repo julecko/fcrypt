@@ -1,3 +1,4 @@
+#include "cli_args.h"
 #include "cli.h"
 #include "crypt/crypt.h"
 #include "util.h"
@@ -8,7 +9,7 @@
 
 int main(int argc, char *argv[]) {
     cli_args_t args;
-    cli_action_t action = parse_cli(argc, argv, &args);
+    cli_args_action_t action = parse_cli_args(argc, argv, &args);
 
     switch (action) {
         case ACTION_EXIT:
@@ -22,7 +23,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char *password = take_password();
+    bool is_hidden = take_answer("Hide password?");
+    char *password = take_password(is_hidden);
 
     switch (action) {
         case ACTION_ENCRYPT:
@@ -34,6 +36,11 @@ int main(int argc, char *argv[]) {
     }
     
     free(password);
+
+    bool delete_old = take_answer("Delete old file?");
+    if (delete_old) {
+        remove_file(args.file);
+    }
 
     if (args.flags & CLI_FLAG_CONTEXT_MENU) {
         press_to_exit();

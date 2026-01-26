@@ -13,6 +13,7 @@ find_package(unofficial-sodium CONFIG REQUIRED)
 add_executable(fcrypt
     src/main.c
     src/cli.c
+    src/cli_args.c
     src/util.c
     src/crypt/crypt.c
     src/crypt/file_format.c
