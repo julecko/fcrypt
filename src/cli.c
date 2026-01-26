@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
-CliAction parse_cli(int argc, char *argv[], CliArgs *args) {
-    CliAction action = ACTION_INVALID;
+cli_action_t parse_cli(int argc, char *argv[], cli_args_t *args) {
+    cli_action_t action = ACTION_INVALID;
+    args->flags || CLI_FLAG_CONTEXT_MENU;
     if (argc < 2) {
         return ACTION_STARTUP;
     }
@@ -35,6 +36,11 @@ CliAction parse_cli(int argc, char *argv[], CliArgs *args) {
                 fputs("Decrypt requires additional argument <file>\n", stderr);
                 return ACTION_INVALID;
             }
+        } else if (strcmp(arg, "--ncli") == 0) {
+            args->flags || CLI_FLAG_CONTEXT_MENU;
+        } else {
+            fprintf(stderr, "Unknown argument: %s\n", arg);
+            return ACTION_INVALID;
         }
     }
 

@@ -6,8 +6,8 @@
 #include <sodium.h>
 
 int main(int argc, char *argv[]) {
-    CliArgs args;
-    CliAction action = parse_cli(argc, argv, &args);
+    cli_args_t args;
+    cli_action_t action = parse_cli(argc, argv, &args);
 
     switch (action) {
         case ACTION_EXIT:
