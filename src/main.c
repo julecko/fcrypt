@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 #include <sodium.h>
 
 int main(int argc, char *argv[]) {
@@ -28,19 +29,80 @@ int main(int argc, char *argv[]) {
 
     switch (action) {
         case ACTION_ENCRYPT:
-            encrypt(args.file, password);
-            break;
+            if (args.file[0] == '*') {
+                WIN32_FIND_DATAA data;
+                HANDLE h = FindFirstFileA("*", &data);
+
+                if (h == INVALID_HANDLE_VALUE) {
+                    fputs(stderr, "Getting all files in directory failed\n");
+                    break;
+                }
+
+                do {
+                    if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                        continue;
+                    }
+                    encrypt(data.cFileName, password);
+
+                    bool delete_old = take_answer("Delete old file?");
+                    if (delete_old) {
+                        remove_file(data.cFileName);
+                    }
+                } while (FindNextFileA(h, &data));
+
+                FindClose(h);
+                break;
+            } else {
+                if (!file_exist(args.file)) {
+                    fprintf(stderr, "File %s doesn not exist\n", args.file);
+                }
+
+                encrypt(args.file, password);
+                bool delete_old = take_answer("Delete old file?");
+                if (delete_old) {
+                    remove_file(args.file);
+                }
+                break;
+            }
         case ACTION_DECRYPT:
-            decrypt(args.file, password);
-            break;
+            if (args.file[0] == '*') {
+                WIN32_FIND_DATAA data;
+                HANDLE h = FindFirstFileA("*", &data);
+
+                if (h == INVALID_HANDLE_VALUE) {
+                    fputs(stderr, "Getting all files in directory failed\n");
+                    break;
+                }
+
+                do {
+                    if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                        continue;
+                    }
+                    decrypt(data.cFileName, password);
+
+                    bool delete_old = take_answer("Delete old file?");
+                    if (delete_old) {
+                        remove_file(data.cFileName);
+                    }
+                } while (FindNextFileA(h, &data));
+
+                FindClose(h);
+                break;
+            } else {
+                if (!file_exist(args.file)) {
+                    fprintf(stderr, "File %s doesn not exist\n", args.file);
+                }
+
+                decrypt(args.file, password);
+                bool delete_old = take_answer("Delete old file?");
+                if (delete_old) {
+                    remove_file(args.file);
+                }
+                break;
+            }
     }
     
     free(password);
-
-    bool delete_old = take_answer("Delete old file?");
-    if (delete_old) {
-        remove_file(args.file);
-    }
 
     if (args.flags & CLI_FLAG_CONTEXT_MENU) {
         press_to_exit();

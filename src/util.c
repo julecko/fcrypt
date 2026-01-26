@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <stdbool.h>
 
 char *make_enc_filename(const char *filename) {
     size_t len = strlen(filename);
@@ -37,6 +38,16 @@ char *make_dec_filename(const char *filename) {
     }
 
     return out;
+}
+
+bool file_exist(const char *filename) {
+    FILE *f = fopen(filename, "r");
+    if (!f) {
+        return false;
+    } else {
+        fclose(f);
+        return true;
+    }
 }
 
 void remove_file(const char *filepath) {
