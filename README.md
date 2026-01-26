@@ -4,16 +4,12 @@
 
 fcrypt lets you encrypt and decrypt files locally using a symmetric key (password). It’s designed for simplicity and ease of use, not as a replacement for production‑grade security libraries. Use at your own risk.
 
----
-
 ## Features
 
 - Encrypt single files with a password.
 - Decrypt files previously encrypted by fcrypt.
 - Built with C/CMake for Windows.
 - Libsodium for safe crypto.
-
----
 
 ## Contents
 
@@ -27,8 +23,6 @@ fcrypt lets you encrypt and decrypt files locally using a symmetric key (passwor
 ├── LICENSE             # MIT License
 └── vcpkg.json          # Vcpkg manifest for libsodium
 ```
-
----
 
 ## Building
 
@@ -46,8 +40,6 @@ fcrypt lets you encrypt and decrypt files locally using a symmetric key (passwor
 
 After building you should have a `fcrypt.exe` in the build output.
 
-
----
 
 ## Usage
 
