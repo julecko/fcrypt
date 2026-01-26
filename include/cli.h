@@ -4,7 +4,6 @@
 typedef enum {
     ACTION_INVALID,
     ACTION_EXIT,
-    ACTION_STARTUP,
     ACTION_ENCRYPT,
     ACTION_DECRYPT,
 } cli_action_t;

@@ -1,5 +1,6 @@
 #include "cli.h"
 #include "crypt/crypt.h"
+#include "util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,9 +22,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char password[256];
-    printf("Enter password: ");
-    scanf("%255[^\n]", password);
+    char *password = take_password();
 
     switch (action) {
         case ACTION_ENCRYPT:
@@ -32,6 +31,12 @@ int main(int argc, char *argv[]) {
         case ACTION_DECRYPT:
             decrypt(args.file, password);
             break;
+    }
+    
+    free(password);
+
+    if (args.flags & CLI_FLAG_CONTEXT_MENU) {
+        press_to_exit();
     }
 
     return EXIT_SUCCESS;
