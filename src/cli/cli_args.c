@@ -41,6 +41,25 @@ void free_cli_args(cli_args_t *args) {
     free(args->file_paths);
 }
 
+static int check_expand_args(cli_args_t *args, const char *filename) {
+    if (args->file_paths_length >= MAX_FILES_PARSED) {
+        printf("Maximum files passed reached: %d\nStopped on file: %s\n", MAX_FILES_PARSED, filename);
+        return -1;
+    }
+    else if (args->file_paths_length == args->file_paths_capacity) {
+        args->file_paths_capacity *= 2;
+        char **tmp = realloc(args->file_paths, args->file_paths_capacity * sizeof(char *));
+        if (!tmp) {
+            fputs("Realloc failed", stderr);
+            exit(1);
+        }
+        args->file_paths = tmp;
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 #ifdef _WIN32
 
 static void expand_asterisk(const char *pattern, cli_args_t *args) {
@@ -80,7 +99,6 @@ static void expand_asterisk(const char *pattern, cli_args_t *args) {
 static void parse_files(int *i, int argc, char *argv[], cli_args_t *args) {
     while (*i + 1 < argc && argv[++(*i)][0] != '-') {
         const char *arg = argv[*i];
-        printf("%s\n", arg);
         if (check_expand_args(args, arg) == -1) {
             return;
         }
@@ -139,23 +157,4 @@ cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
     }
 
     return action; 
-}
-
-static int check_expand_args(cli_args_t *args, const char *filename) {
-    if (args->file_paths_length >= MAX_FILES_PARSED) {
-        printf("Maximum files passed reached: %d\nStopped on file: %s\n", MAX_FILES_PARSED, filename);
-        return -1;
-    }
-    else if (args->file_paths_length == args->file_paths_capacity) {
-        args->file_paths_capacity *= 2;
-        char **tmp = realloc(args->file_paths, args->file_paths_capacity * sizeof(char *));
-        if (!tmp) {
-            fputs("Realloc failed", stderr);
-            exit(1);
-        }
-        args->file_paths = tmp;
-        return 1;
-    } else {
-        return 0;
-    }
 }

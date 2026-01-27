@@ -24,7 +24,6 @@ int encrypt(const char *input_filename, const char *password) {
 
     char *output_filename = make_enc_filename(input_filename);
     FILE *output_file = fopen(output_filename, "wb");
-    free(output_filename);
     if (!output_file) {
         fputs("Encrypt: failed to open output file\n", stderr);
         fclose(input_file);
@@ -46,6 +45,10 @@ int encrypt(const char *input_filename, const char *password) {
                       crypto_pwhash_MEMLIMIT_INTERACTIVE,
                       crypto_pwhash_ALG_DEFAULT) != 0) {
         fputs("Out of memory: key derivation failed\n", stderr);
+        
+        remove_file(output_filename);
+        free(output_filename);
+
         fclose(input_file);
         fclose(output_file);
         return -1;
@@ -55,6 +58,10 @@ int encrypt(const char *input_filename, const char *password) {
     crypto_secretstream_xchacha20poly1305_state state;
     if (crypto_secretstream_xchacha20poly1305_init_push(&state, fcrt_header.stream_header, key) != 0) {
         fputs("Stream init failed\n", stderr);
+
+        remove_file(output_filename);
+        free(output_filename);
+
         fclose(input_file);
         fclose(output_file);
         return -1;
@@ -63,6 +70,10 @@ int encrypt(const char *input_filename, const char *password) {
     int result = fcrt_write_header(output_file, &fcrt_header);
     if (result == -1) {
         fputs("Encrypt: writing header to file failed\n", stderr);
+
+        remove_file(output_filename);
+        free(output_filename);
+
         fclose(input_file);
         fclose(output_file);
         return -1;
@@ -79,6 +90,8 @@ int encrypt(const char *input_filename, const char *password) {
         crypto_secretstream_xchacha20poly1305_push(&state, out, &out_len, in, rlen, NULL, 0, tag);
         fwrite(out, 1, out_len, output_file);
     }
+
+    free(output_filename);
 
     fclose(input_file);
     fclose(output_file);
@@ -132,7 +145,6 @@ int decrypt(const char *input_filename, const char *password) {
     char *output_filename = make_dec_filename(input_filename);
     FILE *output_file = fopen(output_filename, "wb");
 
-    free(output_filename);
 
     if (!output_file) {
         fputs("Decrypt: failed to open output file\n", stderr);
@@ -152,6 +164,10 @@ int decrypt(const char *input_filename, const char *password) {
 
         if (crypto_secretstream_xchacha20poly1305_pull(&state, out, &out_len, &tag, in, rlen, NULL, 0) != 0) {
             fputs("Decrypt: file corrupted or wrong password\n", stderr);
+
+            remove_file(output_filename);
+            free(output_filename);
+
             fclose(input_file);
             fclose(output_file);
             sodium_memzero(key, KEY_SIZE);
@@ -162,6 +178,8 @@ int decrypt(const char *input_filename, const char *password) {
 
         if (tag & crypto_secretstream_xchacha20poly1305_TAG_FINAL) break;
     }
+
+    free(output_file);
 
     fclose(input_file);
     fclose(output_file);

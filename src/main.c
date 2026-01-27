@@ -12,9 +12,9 @@ int main(int argc, char *argv[]) {
     cli_args_t args = create_cli_args();
     cli_args_action_t action = parse_cli_args(argc, argv, &args);
 
-    for (int i = 0; i < args.file_paths_length; i++) {
+    /*for (int i = 0; i < args.file_paths_length; i++) {
         printf("File parsed %s\n", args.file_paths[i]);
-    }
+    }*/
 
     switch (action) {
         case ACTION_EXIT:
