@@ -38,7 +38,7 @@ void process_all_files(const char *pattern, const char *password, bool encryptin
     HANDLE h = FindFirstFileA(pattern, &data);
 
     if (h == INVALID_HANDLE_VALUE) {
-        fputs(stderr, "Getting all files in directory failed\n", stderr);
+        fputs("Getting all files in directory failed\n", stderr);
         return;
     }
 
