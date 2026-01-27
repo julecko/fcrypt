@@ -57,14 +57,14 @@ cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
                 fputs("Encrypt requires additional argument <file>\n", stderr);
                 return ACTION_INVALID;
             }
-            i = parse_files(i, argc, argv, args);
+            parse_files(&i, argc, argv, args);
             action = ACTION_ENCRYPT;
         } else if (strcmp(arg, "decrypt") == 0) {
             if (i + 1 >= argc) {
                 fputs("Decrypt requires additional argument <file>\n", stderr);
                 return ACTION_INVALID;
             }
-            i = parse_files(i, argc, argv, args);
+            parse_files(&i, argc, argv, args);
             action = ACTION_DECRYPT;
         } else if (strcmp(arg, "--ncli") == 0) {
             args->flags |= CLI_FLAG_CONTEXT_MENU;
@@ -79,11 +79,11 @@ cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
     return action; 
 }
 
-static int parse_files(int i, int argc, char *argv[], cli_args_t *args) {
-    while (i + 1 < argc && argv[i+1][0] != '-') {
-        i++;
+static parse_files(int *i, int argc, char *argv[], cli_args_t *args) {
+    while (*i + 1 < argc && argv[++(*i)][0] != '-') {
+        printf("%s\n", argv[*i]);
         if (args->file_paths_length >= MAX_FILES_PARSED) {
-            printf("Maximum files passed reached: %d\nStopped on file: %s\n", MAX_FILES_PARSED, argv[i]);
+            printf("Maximum files passed reached: %d\nStopped on file: %s\n", MAX_FILES_PARSED, argv[*i]);
         }
         else if (args->file_paths_length == args->file_paths_capacity) {
             args->file_paths_capacity *= 2;
@@ -94,8 +94,6 @@ static int parse_files(int i, int argc, char *argv[], cli_args_t *args) {
             }
             args->file_paths = tmp;
         }
-        args->file_paths[args->file_paths_length] = argv[i];
+        args->file_paths[args->file_paths_length++] = argv[*i];
     }
-
-    return i;
 }
