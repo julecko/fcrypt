@@ -5,16 +5,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 static void print_help() {
     puts("fcrypt usage: fcrypt <flags> [command]");
     puts("Commands:");
-    puts("    encrypt <file>");
-    puts("    decrypt <file>");
+    puts("    encrypt <files>");
+    puts("    decrypt <files>");
     puts("Flags:");
     puts("    -h/--help showcase this help message");
     puts("    -v/--verbose more verbose output");
     puts("Examples:");
-    puts("    fcrypt encrypt file.txt");
+    puts("    fcrypt encrypt file.txt file1.txt");
+    puts("    fcrypt encrypt files/*");
     puts("    fcrypt decrypt file.txt.dec");
     puts("    fcrypt -h");
 }
@@ -35,6 +40,63 @@ void free_cli_args(cli_args_t *args) {
     args->file_paths_capacity = 0;
     free(args->file_paths);
 }
+
+#ifdef _WIN32
+
+static void expand_asterisk(const char *pattern, cli_args_t *args) {
+    WIN32_FIND_DATAA data;
+    HANDLE h = FindFirstFileA(pattern, &data);
+
+    if (h == INVALID_HANDLE_VALUE) {
+        fputs("Getting all files in directory failed\n", stderr);
+        return;
+    }
+
+    char dir[MAX_PATH];
+    strcpy(dir, pattern);
+
+    char *star = strrchr(dir, '*');
+    if (star) *star = '\0';
+
+    do {
+        if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            continue;
+
+        size_t full_len = strlen(dir) + strlen(data.cFileName) + 1;
+        args->file_paths[args->file_paths_length] = malloc(full_len);
+        sprintf(args->file_paths[args->file_paths_length], "%s%s", dir, data.cFileName);
+        args->file_paths_length++;
+
+        if (check_expand_args(args, pattern) == -1) {
+            return;
+        }
+    } while (FindNextFileA(h, &data));
+
+    FindClose(h);
+}
+
+#endif
+
+static void parse_files(int *i, int argc, char *argv[], cli_args_t *args) {
+    while (*i + 1 < argc && argv[++(*i)][0] != '-') {
+        const char *arg = argv[*i];
+        printf("%s\n", arg);
+        if (check_expand_args(args, arg) == -1) {
+            return;
+        }
+        #ifdef _WIN32
+        char lastchar = argv[*i][strlen(arg) - 1];
+        if (lastchar == '*') {
+            expand_asterisk(arg, args);
+        } else {
+            args->file_paths[args->file_paths_length++] = argv[*i];
+        }
+        #else
+        args->file_paths[args->file_paths_length++] = argv[*i];
+        #endif
+    }
+}
+
 
 cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
     cli_args_action_t action = ACTION_INVALID;
@@ -79,21 +141,21 @@ cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
     return action; 
 }
 
-static parse_files(int *i, int argc, char *argv[], cli_args_t *args) {
-    while (*i + 1 < argc && argv[++(*i)][0] != '-') {
-        printf("%s\n", argv[*i]);
-        if (args->file_paths_length >= MAX_FILES_PARSED) {
-            printf("Maximum files passed reached: %d\nStopped on file: %s\n", MAX_FILES_PARSED, argv[*i]);
+static int check_expand_args(cli_args_t *args, const char *filename) {
+    if (args->file_paths_length >= MAX_FILES_PARSED) {
+        printf("Maximum files passed reached: %d\nStopped on file: %s\n", MAX_FILES_PARSED, filename);
+        return -1;
+    }
+    else if (args->file_paths_length == args->file_paths_capacity) {
+        args->file_paths_capacity *= 2;
+        char **tmp = realloc(args->file_paths, args->file_paths_capacity * sizeof(char *));
+        if (!tmp) {
+            fputs("Realloc failed", stderr);
+            exit(1);
         }
-        else if (args->file_paths_length == args->file_paths_capacity) {
-            args->file_paths_capacity *= 2;
-            char **tmp = realloc(args->file_paths, args->file_paths_capacity * sizeof(char *));
-            if (!tmp) {
-                fputs(stderr, "Realloc failed");
-                exit(1);
-            }
-            args->file_paths = tmp;
-        }
-        args->file_paths[args->file_paths_length++] = argv[*i];
+        args->file_paths = tmp;
+        return 1;
+    } else {
+        return 0;
     }
 }
