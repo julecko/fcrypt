@@ -1,6 +1,6 @@
 #include "crypt/crypt.h"
 #include "util.h"
-#include "cli.h"
+#include "cli/cli.h"
 
 #include <stdbool.h>
 #include <stdio.h>

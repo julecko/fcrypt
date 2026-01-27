@@ -17,13 +17,13 @@ endif()
 
 add_executable(fcrypt
     src/main.c
-    src/cli.c
-    src/cli_args.c
+    src/file_process.c
     src/util.c
     src/crypt/crypt.c
     src/crypt/file_format.c
-    src/cli_hide.c
-    src/file_process.c
+    src/cli/cli.c
+    src/cli/cli_args.c
+    src/cli/cli_hide.c
 )
 
 if(WIN32)

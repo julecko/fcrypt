@@ -44,14 +44,14 @@ After building you should have a `fcrypt.exe` in the build output.
 ## Usage
 
 ```
-fcrypt <command> <input-file>
+fcrypt <command> <input-files>
 fcrypt --version
 fcrypt --help
 ```
 
 ### Commands
 
-|  Command  |    Description     |
-|-----------|--------------------|
-| `encrypt` | Encrypt input file |
-| `decrypt` | Decrypt input file |
+| Command   | Description         |
+|-----------|---------------------|
+| `encrypt` | Encrypt input files |
+| `decrypt` | Decrypt input files |

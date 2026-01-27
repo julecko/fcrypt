@@ -1,4 +1,4 @@
-#include "cli_hide.h"
+#include "cli/cli_hide.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
