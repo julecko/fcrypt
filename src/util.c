@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h>
 #include <stdbool.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 char *make_enc_filename(const char *filename) {
     size_t len = strlen(filename);
@@ -51,9 +56,17 @@ bool file_exist(const char *filename) {
 }
 
 void remove_file(const char *filepath) {
+#ifdef _WIN32
     if (remove(filepath) == 0) {
         puts("File deleted");
     } else {
         perror("Remove file");
     }
+#else
+    if (unlink(filepath) == 0) {
+        puts("File deleted");
+    } else {
+        perror("Remove file");
+    }
+#endif
 }

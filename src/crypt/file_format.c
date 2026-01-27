@@ -1,5 +1,6 @@
 #include "crypt/file_format.h"
 #include <stdio.h>
+#include <string.h>
 
 int fcrt_write_header(FILE *f, const fcrt_header_t *hdr) {
     if (fwrite(FCRT_MAGIC, 1, FCRT_MAGIC_LEN, f) != FCRT_MAGIC_LEN)

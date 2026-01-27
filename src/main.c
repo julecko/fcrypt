@@ -2,10 +2,10 @@
 #include "cli.h"
 #include "crypt/crypt.h"
 #include "util.h"
+#include "file_process.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 #include <sodium.h>
 
 int main(int argc, char *argv[]) {
@@ -24,82 +24,14 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    bool encrypting = (action == ACTION_ENCRYPT);
     bool is_hidden = take_answer("Hide password?");
     char *password = take_password(is_hidden);
 
-    switch (action) {
-        case ACTION_ENCRYPT:
-            if (args.file[0] == '*') {
-                WIN32_FIND_DATAA data;
-                HANDLE h = FindFirstFileA("*", &data);
-
-                if (h == INVALID_HANDLE_VALUE) {
-                    fputs(stderr, "Getting all files in directory failed\n");
-                    break;
-                }
-
-                do {
-                    if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                        continue;
-                    }
-                    encrypt(data.cFileName, password);
-
-                    bool delete_old = take_answer("Delete old file?");
-                    if (delete_old) {
-                        remove_file(data.cFileName);
-                    }
-                } while (FindNextFileA(h, &data));
-
-                FindClose(h);
-                break;
-            } else {
-                if (!file_exist(args.file)) {
-                    fprintf(stderr, "File %s doesn not exist\n", args.file);
-                }
-
-                encrypt(args.file, password);
-                bool delete_old = take_answer("Delete old file?");
-                if (delete_old) {
-                    remove_file(args.file);
-                }
-                break;
-            }
-        case ACTION_DECRYPT:
-            if (args.file[0] == '*') {
-                WIN32_FIND_DATAA data;
-                HANDLE h = FindFirstFileA("*", &data);
-
-                if (h == INVALID_HANDLE_VALUE) {
-                    fputs(stderr, "Getting all files in directory failed\n");
-                    break;
-                }
-
-                do {
-                    if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                        continue;
-                    }
-                    decrypt(data.cFileName, password);
-
-                    bool delete_old = take_answer("Delete old file?");
-                    if (delete_old) {
-                        remove_file(data.cFileName);
-                    }
-                } while (FindNextFileA(h, &data));
-
-                FindClose(h);
-                break;
-            } else {
-                if (!file_exist(args.file)) {
-                    fprintf(stderr, "File %s doesn not exist\n", args.file);
-                }
-
-                decrypt(args.file, password);
-                bool delete_old = take_answer("Delete old file?");
-                if (delete_old) {
-                    remove_file(args.file);
-                }
-                break;
-            }
+    if (args.file[0] == '*') {
+        process_all_files("*", password, encrypting);
+    } else {
+        process_file(args.file, password, encrypting);
     }
     
     free(password);

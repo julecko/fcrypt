@@ -8,7 +8,12 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
 
-find_package(unofficial-sodium CONFIG REQUIRED)
+if(WIN32)
+    find_package(unofficial-sodium CONFIG REQUIRED)
+else()
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(SODIUM REQUIRED libsodium)
+endif()
 
 add_executable(fcrypt
     src/main.c
@@ -17,9 +22,20 @@ add_executable(fcrypt
     src/util.c
     src/crypt/crypt.c
     src/crypt/file_format.c
+    src/cli_hide.c
+    src/file_process.c
 )
 
-target_link_libraries(fcrypt PRIVATE unofficial-sodium::sodium)
+if(WIN32)
+    target_link_libraries(fcrypt PRIVATE unofficial-sodium::sodium)
+else()
+    target_include_directories(fcrypt PRIVATE ${SODIUM_INCLUDE_DIRS})
+    target_link_libraries(fcrypt PRIVATE ${SODIUM_LIBRARIES})
+endif()
+
+if(NOT WIN32)
+    target_compile_options(fcrypt PRIVATE ${SODIUM_CFLAGS_OTHER})
+endif()
 
 target_include_directories(fcrypt PRIVATE
     ${PROJECT_SOURCE_DIR}/include

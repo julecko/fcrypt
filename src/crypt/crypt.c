@@ -4,6 +4,7 @@
 #include <sodium.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define CHUNK_SIZE 4096
 #define SALT_SIZE crypto_pwhash_SALTBYTES
@@ -74,7 +75,7 @@ int encrypt(const char *input_filename, const char *password) {
     while ((rlen = fread(in, 1, CHUNK_SIZE, input_file)) > 0) {
         unsigned char tag = feof(input_file) ? crypto_secretstream_xchacha20poly1305_TAG_FINAL : 0;
 
-        size_t out_len;
+        unsigned long long out_len;
         crypto_secretstream_xchacha20poly1305_push(&state, out, &out_len, in, rlen, NULL, 0, tag);
         fwrite(out, 1, out_len, output_file);
     }
@@ -146,7 +147,7 @@ int decrypt(const char *input_filename, const char *password) {
     size_t rlen;
 
     while ((rlen = fread(in, 1, sizeof(in), input_file)) > 0) {
-        size_t out_len;
+        unsigned long long out_len;
         unsigned char tag;
 
         if (crypto_secretstream_xchacha20poly1305_pull(&state, out, &out_len, &tag, in, rlen, NULL, 0) != 0) {
