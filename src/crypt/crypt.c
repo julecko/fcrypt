@@ -179,7 +179,7 @@ int decrypt(const char *input_filename, const char *password) {
         if (tag & crypto_secretstream_xchacha20poly1305_TAG_FINAL) break;
     }
 
-    free(output_file);
+    free(output_filename);
 
     fclose(input_file);
     fclose(output_file);
