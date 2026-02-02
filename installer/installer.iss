@@ -44,7 +44,7 @@ Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt"; \
 
 Root: HKLM; Subkey: "Software\Classes\*\shell\Encrypt\command"; \
     ValueType: string; ValueName: ""; \
-    ValueData: """{app}\{#MyAppExeName}"" --ncli --encrypt ""%1"""; \
+    ValueData: """{app}\{#MyAppExeName}"" --ncli encrypt ""%1"""; \
     Flags: uninsdeletekey; Check: IsAdminInstallMode
 
 Root: HKLM; Subkey: "Software\Classes\*\shell\Decrypt"; \
@@ -57,7 +57,7 @@ Root: HKLM; Subkey: "Software\Classes\*\shell\Decrypt"; \
 
 Root: HKLM; Subkey: "Software\Classes\*\shell\Decrypt\command"; \
     ValueType: string; ValueName: ""; \
-    ValueData: """{app}\{#MyAppExeName}"" --ncli --decrypt ""%1"""; \
+    ValueData: """{app}\{#MyAppExeName}"" --ncli decrypt ""%1"""; \
     Flags: uninsdeletekey; Check: IsAdminInstallMode
 
 ; Add to system PATH
@@ -78,7 +78,7 @@ Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt"; \
 
 Root: HKCU; Subkey: "Software\Classes\*\shell\Encrypt\command"; \
     ValueType: string; ValueName: ""; \
-    ValueData: """{app}\{#MyAppExeName}"" --ncli --encrypt ""%1"""; \
+    ValueData: """{app}\{#MyAppExeName}"" --ncli encrypt ""%1"""; \
     Flags: uninsdeletekey; Check: not IsAdminInstallMode
 
 Root: HKCU; Subkey: "Software\Classes\*\shell\Decrypt"; \
@@ -91,7 +91,7 @@ Root: HKCU; Subkey: "Software\Classes\*\shell\Decrypt"; \
 
 Root: HKCU; Subkey: "Software\Classes\*\shell\Decrypt\command"; \
     ValueType: string; ValueName: ""; \
-    ValueData: """{app}\{#MyAppExeName}"" --ncli --decrypt ""%1"""; \
+    ValueData: """{app}\{#MyAppExeName}"" --ncli decrypt ""%1"""; \
     Flags: uninsdeletekey; Check: not IsAdminInstallMode
 
 ; Add to user PATH
