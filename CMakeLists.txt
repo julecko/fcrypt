@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(fcrypt C)
+project(fcrypt C CXX)
 
 set(FCRYPT_VERSION "1.0.0")
 
@@ -7,6 +7,9 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
+
+
+find_package(FLTK CONFIG REQUIRED)
 
 if(WIN32)
     find_package(unofficial-sodium CONFIG REQUIRED)
@@ -24,6 +27,18 @@ add_executable(fcrypt
     src/cli/cli.c
     src/cli/cli_args.c
     src/cli/cli_hide.c
+    src/gui/gui_main.cpp
+)
+
+if(WIN32)
+    set_target_properties(fcrypt PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
+
+target_link_libraries(fcrypt PRIVATE
+    fltk
+    fltk_gl
+    fltk_forms
+    fltk_images
 )
 
 if(WIN32)
@@ -68,6 +83,9 @@ if (MSVC)
     )
     target_compile_definitions(fcrypt PRIVATE
         $<$<CONFIG:Release>:NDEBUG>
+    )
+    target_link_options(fcrypt PRIVATE 
+        $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>
     )
 
 else() # GCC / Clang
