@@ -3,11 +3,19 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 
-bool take_answer(const char *question) {
+bool take_answer(const char *fmt, ...) {
     char choice = 'n';
-    printf("%s [y/N] ", question);
+
+    va_list args;
+    va_start(args, fmt);
+
+    vprintf(fmt, args);
+    printf(" [y/N] ");
+
+    va_end(args);
     
     choice = getchar();
     while (getchar() != '\n');
@@ -35,7 +43,6 @@ char *take_password(bool is_hidden) {
         password[len - 1] = '\0';
     }
 
-    printf("\n");
     return password;
 }
 

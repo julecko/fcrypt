@@ -5,6 +5,6 @@
 
 char *take_password(bool is_hidden);
 void press_to_exit();
-bool take_answer(const char *question);
+bool take_answer(const char *fmt, ...);
 
 #endif

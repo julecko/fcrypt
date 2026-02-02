@@ -19,14 +19,15 @@ void process_file(const char *filename, const char *password, bool encrypting) {
         fprintf(stderr, "File %s does not exist\n", filename);
         return;
     }
-
+    
+    int result;
     if (encrypting) {
-        encrypt(filename, password);
+        result = encrypt(filename, password);
     } else {
-        decrypt(filename, password);
+        result = decrypt(filename, password);
     }
 
-    if (take_answer("Delete old file?")) {
+    if (result == 0 && take_answer("Delete old file (\"%s\")?", filename)) {
         remove_file(filename);
     }
 }
