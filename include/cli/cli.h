@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 char *take_password(bool is_hidden);
-void press_to_exit();
+void press_to_exit(void);
 bool take_answer(const char *fmt, ...);
 
 #endif

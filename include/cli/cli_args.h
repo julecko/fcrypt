@@ -3,6 +3,10 @@
 
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MAX_FILES_PARSED 256
 
 typedef enum {
@@ -30,5 +34,8 @@ cli_args_t create_cli_args();
 void free_cli_args(cli_args_t *args);
 cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

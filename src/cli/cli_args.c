@@ -9,7 +9,7 @@
 #include <windows.h>
 #endif
 
-static void print_help() {
+static void print_help(void) {
     puts("fcrypt usage: fcrypt <flags> [command]");
     puts("Commands:");
     puts("    encrypt <files>");
@@ -24,7 +24,7 @@ static void print_help() {
     puts("    fcrypt -h");
 }
 
-cli_args_t create_cli_args() {
+cli_args_t create_cli_args(void) {
     cli_args_t args = {0};
     args.file_paths_capacity = 4;
     args.file_paths = malloc(args.file_paths_capacity * sizeof(char *));

@@ -11,13 +11,13 @@
 static DWORD originalMode;
 static HANDLE hStdin = NULL;
 
-void hide_input() {
+void hide_input(void) {
     hStdin = GetStdHandle(STD_INPUT_HANDLE);
     GetConsoleMode(hStdin, &originalMode);
     SetConsoleMode(hStdin, originalMode & ~(ENABLE_ECHO_INPUT));
 }
 
-void reveal_input() {
+void reveal_input(void) {
     if (hStdin) {
         SetConsoleMode(hStdin, originalMode);
         hStdin = NULL;
@@ -27,7 +27,7 @@ void reveal_input() {
 static struct termios oldt;
 static bool hidden_active = false;
 
-void hide_input() {
+void hide_input(void) {
     tcgetattr(STDIN_FILENO, &oldt);
     struct termios newt = oldt;
     newt.c_lflag &= ~ECHO;
@@ -35,7 +35,7 @@ void hide_input() {
     hidden_active = true;
 }
 
-void reveal_input() {
+void reveal_input(void) {
     if (hidden_active) {
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
         hidden_active = false;

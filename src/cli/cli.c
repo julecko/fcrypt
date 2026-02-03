@@ -46,7 +46,7 @@ char *take_password(bool is_hidden) {
     return password;
 }
 
-void press_to_exit() {
+void press_to_exit(void) {
     printf("Press any character to exit...");
     getchar();
 }

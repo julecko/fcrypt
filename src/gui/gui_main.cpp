@@ -6,15 +6,19 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Browser.H>
+#include <FL/Fl_Multiline_Output.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Scroll.H>
 #include <FL/fl_ask.H>
 
 #include <vector>
 #include <string>
+#include <sstream>
 #include <sodium.h>
+#include <FL/Fl_Browser.H>
 
 static Fl_Input *password_input;
-static Fl_Browser *file_browser;
+static Fl_Multiline_Output *files_output;
 static cli_args_t *global_args;
 static cli_args_action_t global_action;
 
@@ -26,24 +30,11 @@ void on_encrypt(Fl_Widget*, void*) {
         return;
     }
 
-    std::vector<std::string> selected_files;
-
-    for (int i = 1; i <= file_browser->size(); i++) {
-        if (file_browser->selected(i)) {
-            selected_files.push_back(file_browser->text(i));
-        }
+    for (int i = 0; i < global_args->file_paths_length; i++) {
+        process_file(global_args->file_paths[i], password, global_action == ACTION_ENCRYPT);
     }
 
-    if (selected_files.empty()) {
-        fl_alert("No files selected");
-        return;
-    }
-
-    for (auto &file : selected_files) {
-        process_file(file.c_str(), password, global_action == ACTION_ENCRYPT);
-    }
-
-    fl_message("Selected files processed successfully!");
+    fl_message("All files processed successfully!");
 }
 
 int gui_main(cli_args_t *args, cli_args_action_t action) {
@@ -57,21 +48,28 @@ int gui_main(cli_args_t *args, cli_args_action_t action) {
 
     Fl_Window win(500, 350, "fcrypt");
 
-    file_browser = new Fl_Browser(20, 20, 460, 200);
-    file_browser->type(FL_MULTI_BROWSER);
+    Fl_Box *files_label = new Fl_Box(20, 0, 60, 20, "Files:");
+    files_label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    Fl_Browser *list = new Fl_Browser(20, 20, 460, 200);
+    list->type(FL_HOLD_BROWSER);
 
     for (int i = 0; i < args->file_paths_length; i++) {
-        file_browser->add(args->file_paths[i]);
+        list->add(args->file_paths[i]);
     }
 
     password_input = new Fl_Input(120, 240, 250, 30, "Password:");
     password_input->type(FL_SECRET_INPUT);
 
-    Fl_Button encrypt_btn(200, 290, 100, 30, "Encrypt");
+    const char *action_type = (action == ACTION_ENCRYPT) ? "Encrypt" : "Decrypt";
+
+    Fl_Button encrypt_btn(200, 290, 100, 30, action_type);
     encrypt_btn.callback(on_encrypt);
 
     win.end();
     win.show();
 
-    return Fl::run();
+    int exit_code = Fl::run();
+    free_cli_args(args);
+    return exit_code;
 }
