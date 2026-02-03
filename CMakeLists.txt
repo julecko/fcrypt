@@ -9,11 +9,12 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
 
 
-find_package(FLTK CONFIG REQUIRED)
 
 if(WIN32)
     find_package(unofficial-sodium CONFIG REQUIRED)
+    find_package(FLTK CONFIG REQUIRED)
 else()
+    find_package(FLTK REQUIRED)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SODIUM REQUIRED libsodium)
 endif()
