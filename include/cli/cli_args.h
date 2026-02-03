@@ -16,6 +16,7 @@ typedef enum {
     CLI_FLAG_NONE = 0,
     CLI_FLAG_CONTEXT_MENU = 1 << 1,
     CLI_FLAG_VERBOSE = 1 << 2,
+    CLI_FLAG_GUI = 1 << 3,
 } cli_args_flags_t;
 
 typedef struct {

@@ -115,7 +115,6 @@ static void parse_files(int *i, int argc, char *argv[], cli_args_t *args) {
     }
 }
 
-
 cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
     cli_args_action_t action = ACTION_INVALID;
 
@@ -146,8 +145,10 @@ cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
             }
             parse_files(&i, argc, argv, args);
             action = ACTION_DECRYPT;
-        } else if (strcmp(arg, "--ncli") == 0) {
+        } else if (strcmp(arg, "--ncli") == 0) { // Remove later
             args->flags |= CLI_FLAG_CONTEXT_MENU;
+        } else if (strcmp(arg, "--gui") == 0) {
+            args->flags |= CLI_FLAG_GUI;
         } else if (strcmp(arg, "-v") == 0 || strcmp(arg, "--verbose") == 0){
             args->flags |= CLI_FLAG_VERBOSE;
         } else {

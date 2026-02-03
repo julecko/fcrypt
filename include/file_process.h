@@ -3,7 +3,15 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void process_file(const char *filename, const char *password, bool encrypting);
 void process_all_files(const char *pattern, const char *password, bool encrypting);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
