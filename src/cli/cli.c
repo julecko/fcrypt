@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 
 bool take_answer(const char *fmt, ...) {
     char choice = 'n';
@@ -50,3 +54,21 @@ void press_to_exit(void) {
     printf("Press any character to exit...");
     getchar();
 }
+
+#ifdef _WIN32
+void ensure_console(void) {
+    if (GetConsoleWindow())
+        return;
+
+    AllocConsole();
+
+    FILE f;
+    freopen_s(&f, "CONIN$", "r", stdin);
+    freopen_s(&f, "CONOUT$", "w", stdout);
+    freopen_s(&f, "CONOUT$", "w", stderr);
+}
+#else
+void ensure_console(void) {
+    fprintf(stderr, "This function is not implemented yet %s", "ensure_console");
+}
+#endif

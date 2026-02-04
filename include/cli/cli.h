@@ -6,5 +6,6 @@
 char *take_password(bool is_hidden);
 void press_to_exit(void);
 bool take_answer(const char *fmt, ...);
+void ensure_console(void);
 
 #endif

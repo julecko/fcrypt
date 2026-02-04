@@ -30,7 +30,7 @@ typedef struct {
     cli_args_flags_t flags;
 } cli_args_t;
 
-cli_args_t create_cli_args();
+cli_args_t create_cli_args(void);
 void free_cli_args(cli_args_t *args);
 cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args);
 
