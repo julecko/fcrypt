@@ -20,7 +20,7 @@
 static Fl_Input *password_input;
 static Fl_Multiline_Output *files_output;
 static cli_args_t *global_args;
-static cli_args_action_t global_action;
+static cli_args_command_t global_command;
 
 void on_encrypt(Fl_Widget*, void*) {
     const char *password = password_input->value();
@@ -31,15 +31,15 @@ void on_encrypt(Fl_Widget*, void*) {
     }
 
     for (int i = 0; i < global_args->file_paths_length; i++) {
-        process_file(global_args->file_paths[i], password, global_action == ACTION_ENCRYPT);
+        process_file(global_args->file_paths[i], password, global_command == CLI_COMMAND_ENCRYPT);
     }
 
     fl_message("All files processed successfully!");
 }
 
-int gui_main(cli_args_t *args, cli_args_action_t action) {
+int gui_main(cli_args_t *args) {
     global_args = args;
-    global_action = action;
+    global_command = args->command;
 
     if (sodium_init() < 0) {
         fl_alert("libsodium init failed");
@@ -61,7 +61,7 @@ int gui_main(cli_args_t *args, cli_args_action_t action) {
     password_input = new Fl_Input(120, 240, 250, 30, "Password:");
     password_input->type(FL_SECRET_INPUT);
 
-    const char *action_type = (action == ACTION_ENCRYPT) ? "Encrypt" : "Decrypt";
+    const char *action_type = (args->command == CLI_COMMAND_ENCRYPT) ? "Encrypt" : "Decrypt";
 
     Fl_Button encrypt_btn(200, 290, 100, 30, action_type);
     encrypt_btn.callback(on_encrypt);

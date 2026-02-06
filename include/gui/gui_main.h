@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-int gui_main(cli_args_t *args, cli_args_action_t action);
+int gui_main(cli_args_t *args);
 
 #ifdef __cplusplus
 }

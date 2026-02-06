@@ -9,15 +9,15 @@
 #include <stdlib.h>
 #include <sodium.h>
 
-int gui_main(cli_args_t *args, cli_args_action_t action);
+int gui_main(cli_args_t *args);
 
-int cli_main(cli_args_t *args, cli_args_action_t action) {
+int cli_main(cli_args_t *args) {
     if (sodium_init() < 0) {
         puts("libsodium init failed");
         return 1;
     }
 
-    bool encrypting = (action == ACTION_ENCRYPT);
+    bool encrypting = (args->command == CLI_COMMAND_ENCRYPT);
     bool is_hidden = take_answer("Hide password?");
     char *password = take_password(is_hidden);
 
