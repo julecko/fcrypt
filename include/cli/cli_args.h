@@ -12,8 +12,7 @@ extern "C" {
 typedef enum {
     ACTION_INVALID,
     ACTION_EXIT,
-    ACTION_ENCRYPT,
-    ACTION_DECRYPT,
+    ACTION_CONTINUE,
 } cli_args_action_t;
 
 typedef enum {
@@ -23,10 +22,16 @@ typedef enum {
     CLI_FLAG_GUI = 1 << 3,
 } cli_args_flags_t;
 
+typedef enum {
+    CLI_COMMAND_ENCRYPT,
+    CLI_COMMAND_DECRYPT,
+} cli_args_command_t;
+
 typedef struct {
     char **file_paths;
     size_t file_paths_length;
     size_t file_paths_capacity;
+    cli_args_command_t command;
     cli_args_flags_t flags;
 } cli_args_t;
 

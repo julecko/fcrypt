@@ -132,19 +132,21 @@ cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args) {
             print_help();
             return ACTION_EXIT;
         } else if (strcmp(arg, "encrypt") == 0) {
+            args->command = CLI_COMMAND_ENCRYPT;
             if (i + 1 >= argc) {
                 fputs("Encrypt requires additional argument <file>\n", stderr);
                 return ACTION_INVALID;
             }
             parse_files(&i, argc, argv, args);
-            action = ACTION_ENCRYPT;
+            action = ACTION_CONTINUE;
         } else if (strcmp(arg, "decrypt") == 0) {
+            args->command = CLI_COMMAND_DECRYPT;
             if (i + 1 >= argc) {
                 fputs("Decrypt requires additional argument <file>\n", stderr);
                 return ACTION_INVALID;
             }
             parse_files(&i, argc, argv, args);
-            action = ACTION_DECRYPT;
+            action = ACTION_CONTINUE;
         } else if (strcmp(arg, "--ncli") == 0) { // Remove later
             args->flags |= CLI_FLAG_CONTEXT_MENU;
         } else if (strcmp(arg, "--gui") == 0) {

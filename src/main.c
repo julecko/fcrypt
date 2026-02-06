@@ -45,12 +45,12 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
 
     if (args.flags & CLI_FLAG_GUI) {
-        return gui_main(&args, action);
+        return gui_main(&args);
     } else {
         #ifdef _WIN32
         ensure_console()
         #endif
         
-        return cli_main(&args, action);
+        return cli_main(&args);
     }
 }
