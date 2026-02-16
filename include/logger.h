@@ -8,7 +8,6 @@ extern "C" {
 #endif
 
 typedef enum {
-    LOG_DEBUG_ULTRA,
     LOG_DEBUG,
     LOG_INFO,
     LOG_WARN,

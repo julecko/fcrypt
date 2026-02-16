@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 #ifdef _WIN32
@@ -69,4 +70,12 @@ void remove_file(const char *filepath) {
         perror("Remove file");
     }
 #endif
+}
+
+long get_file_size(FILE *f) {
+    long current = ftell(f);
+    fseek(f, 0, SEEK_END);
+    long size = ftell(f);
+    fseek(f, current, SEEK_SET);
+    return size;
 }

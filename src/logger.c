@@ -82,12 +82,12 @@ void logger_log_error(LogLevel level, const char *fmt, ...) {
 }
 
 void logger_close() {
-    if (!(log_output_normal == stdout) && (!log_output_normal == stderr)) {
+    if (log_output_normal != stdout && log_output_normal != stderr) {
         fclose(log_output_normal);
     }
     log_output_normal = NULL;
 
-    if (!(log_output_error == stdout) && (!log_output_error == stderr)) {
+    if (log_output_error != stdout && log_output_error != stderr) {
         fclose(log_output_error);
     }
     log_output_error = NULL;
