@@ -23,6 +23,7 @@ add_executable(fcrypt
     src/main.c
     src/file_process.c
     src/util.c
+    src/logger.c
     src/crypt/crypt.c
     src/crypt/file_format.c
     src/cli/cli.c

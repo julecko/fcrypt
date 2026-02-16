@@ -1,6 +1,7 @@
 #include "gui/gui_main.h"
 #include "cli/cli_args.h"
 #include "file_process.h"
+#include "logger.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -11,6 +12,7 @@
 #include <FL/Fl_Scroll.H>
 #include <FL/fl_ask.H>
 
+#include <cstdio>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -45,6 +47,14 @@ int gui_main(cli_args_t *args) {
         fl_alert("libsodium init failed");
         return 1;
     }
+    FILE *output_file = fopen("output.txt", "w");
+    FILE *error_file = fopen("error.txt", "w");
+
+    #ifdef DEBUG_MODE
+    logger_init(output_file, error_file, LOG_DEBUG, LOG_FLAG_NONE);
+    #else
+    logger_init(output_file, error_file, LOG_ERROR, LOG_FLAG_NONE);
+    #endif
 
     Fl_Window win(500, 350, "fcrypt");
 
@@ -71,5 +81,6 @@ int gui_main(cli_args_t *args) {
 
     int exit_code = Fl::run();
     free_cli_args(args);
+    logger_close();
     return exit_code;
 }

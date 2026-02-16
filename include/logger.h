@@ -1,14 +1,46 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <stddef.h>
+#include <stdio.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {
-    LOGGING_NORMAL,
-    LOGGING_VERBOSE
-} LoggerLevel;
+    LOG_DEBUG_ULTRA,
+    LOG_DEBUG,
+    LOG_INFO,
+    LOG_WARN,
+    LOG_ERROR
+} LogLevel;
 
-void logger_init(LoggerLevel level);
-void logger_log(const char *msg, ...);
+typedef enum {
+    LOG_FLAG_NONE         = 0,
+    LOG_FLAG_NO_TIMESTAMP = 1 << 0,
+    LOG_FLAG_NO_LEVEL     = 1 << 1,
+    LOG_FLAG_COLOR        = 1 << 2,
+} LoggerFlags;
+
+void logger_init(FILE *output_normal, FILE *output_error, LogLevel level, LoggerFlags flags);
+void logger_set_level(LogLevel level);
+void logger_log_normal(LogLevel level, const char *fmt, ...);
+void logger_log_error(LogLevel level, const char *fmt, ...);
+void logger_close();
+
+#ifdef DEBUG_MODE
+#define log_debug(...) logger_log_normal(LOG_DEBUG, __VA_ARGS__)
+#else
+#define log_debug(...) ((void)0)
+#endif
+
+#define log_info(...)  logger_log_normal(LOG_INFO,  __VA_ARGS__)
+#define log_warn(...)  logger_log_normal(LOG_WARN,  __VA_ARGS__)
+#define log_error(...) logger_log_normal(LOG_ERROR, __VA_ARGS__)
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

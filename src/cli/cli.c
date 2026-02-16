@@ -40,8 +40,10 @@ char *take_password(bool is_hidden) {
         return NULL;
     }
 
-    if (is_hidden) reveal_input();
-
+    if (is_hidden) {
+        reveal_input();
+        putc('\n', stdout);
+    }
     size_t len = strlen(password);
     if (len > 0 && password[len - 1] == '\n') {
         password[len - 1] = '\0';

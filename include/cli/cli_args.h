@@ -40,7 +40,7 @@ void free_cli_args(cli_args_t *args);
 cli_args_action_t parse_cli_args(int argc, char *argv[], cli_args_t *args);
 
 #ifdef __cplusplus
-}
+} // extern "C"
 #endif
 
 #endif

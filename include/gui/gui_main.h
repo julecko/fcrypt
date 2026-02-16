@@ -10,7 +10,7 @@ extern "C" {
 int gui_main(cli_args_t *args);
 
 #ifdef __cplusplus
-}
+} // extern "C"
 #endif
 
 #endif

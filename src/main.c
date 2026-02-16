@@ -4,6 +4,7 @@
 #include "util.h"
 #include "file_process.h"
 #include "gui/gui_main.h"
+#include "logger.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,8 +13,15 @@
 int gui_main(cli_args_t *args);
 
 int cli_main(cli_args_t *args) {
+    #ifdef DEBUG_MODE
+    logger_init(stdout, stderr, LOG_DEBUG, LOG_FLAG_COLOR);
+    #else
+    logger_init(stdout, stderr, LOG_ERROR, LOG_FLAG_NO_LEVEL | LOG_FLAG_NO_TIMESTAMP | LOG_FLAG_COLOR);
+    #endif
+
     if (sodium_init() < 0) {
         puts("libsodium init failed");
+        logger_close();
         return 1;
     }
 
@@ -31,6 +39,8 @@ int cli_main(cli_args_t *args) {
     if (args->flags & CLI_FLAG_CONTEXT_MENU) {
         press_to_exit();
     }
+
+    logger_close();
 
     return EXIT_SUCCESS;
 }
